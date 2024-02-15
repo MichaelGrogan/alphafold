@@ -161,6 +161,11 @@ def _check_flag(flag_name: str,
     raise ValueError(f'{flag_name} must {verb} set when running with '
                      f'"--{other_flag_name}={FLAGS[other_flag_name].value}".')
 
+def _load_features(features_path: str) -> Dict[str, str]:
+    """Loads pickeled features."""
+    with open(features_path, 'rb') as f:
+        features = pickle.load(f)
+    return features
 
 def _jnp_to_np(output: Dict[str, Any]) -> Dict[str, Any]:
   """Recursively changes jax arrays to numpy arrays."""

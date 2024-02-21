@@ -142,6 +142,7 @@ flags.DEFINE_boolean('use_gpu_relax', None, 'Whether to relax on GPU. '
                      'Relax on GPU can be much faster than CPU, so it is '
                      'recommended to enable if possible. GPUs must be available'
                      ' if this setting is enabled.')
+flags.DEFINE_string('features_pkl_path', None, 'path to features dict' )
 
 FLAGS = flags.FLAGS
 
@@ -245,6 +246,7 @@ def predict_structure(
     random_seed: int,
     models_to_relax: ModelsToRelax,
     model_type: str,
+    features_pkl_path: str
 ):
   """Predicts structure using AlphaFold for the given sequence."""
   logging.info('Predicting %s', fasta_name)
@@ -258,15 +260,16 @@ def predict_structure(
 
   # Get features.
   t_0 = time.time()
-  feature_dict = data_pipeline.process(
-      input_fasta_path=fasta_path,
-      msa_output_dir=msa_output_dir)
+  #feature_dict = data_pipeline.process(
+  #    input_fasta_path=fasta_path,
+  #    msa_output_dir=msa_output_dir)
+  feature_dict = _load_features(features_pkl_path)
   timings['features'] = time.time() - t_0
 
   # Write out features as a pickled dictionary.
-  features_output_path = os.path.join(output_dir, 'features.pkl')
-  with open(features_output_path, 'wb') as f:
-    pickle.dump(feature_dict, f, protocol=4)
+  #features_output_path = os.path.join(output_dir, 'features.pkl')
+  #with open(features_output_path, 'wb') as f:
+  #  pickle.dump(feature_dict, f, protocol=4)
 
   unrelaxed_pdbs = {}
   unrelaxed_proteins = {}
@@ -428,36 +431,36 @@ def predict_structure(
 
 
 def main(argv):
-  if len(argv) > 1:
-    raise app.UsageError('Too many command-line arguments.')
-
-  for tool_name in (
-      'jackhmmer', 'hhblits', 'hhsearch', 'hmmsearch', 'hmmbuild', 'kalign'):
-    if not FLAGS[f'{tool_name}_binary_path'].value:
-      raise ValueError(f'Could not find path to the "{tool_name}" binary. Make '
-                       'sure it is installed on your system.')
-
-  use_small_bfd = FLAGS.db_preset == 'reduced_dbs'
-  _check_flag('small_bfd_database_path', 'db_preset',
-              should_be_set=use_small_bfd)
-  _check_flag('bfd_database_path', 'db_preset',
-              should_be_set=not use_small_bfd)
-  _check_flag('uniref30_database_path', 'db_preset',
-              should_be_set=not use_small_bfd)
-
-  run_multimer_system = 'multimer' in FLAGS.model_preset
-  model_type = 'Multimer' if run_multimer_system else 'Monomer'
-  _check_flag('pdb70_database_path', 'model_preset',
-              should_be_set=not run_multimer_system)
-  _check_flag('pdb_seqres_database_path', 'model_preset',
-              should_be_set=run_multimer_system)
-  _check_flag('uniprot_database_path', 'model_preset',
-              should_be_set=run_multimer_system)
-
-  if FLAGS.model_preset == 'monomer_casp14':
-    num_ensemble = 8
-  else:
-    num_ensemble = 1
+#  if len(argv) > 1:
+#    raise app.UsageError('Too many command-line arguments.')
+#
+#  for tool_name in (
+#      'jackhmmer', 'hhblits', 'hhsearch', 'hmmsearch', 'hmmbuild', 'kalign'):
+#    if not FLAGS[f'{tool_name}_binary_path'].value:
+#      raise ValueError(f'Could not find path to the "{tool_name}" binary. Make '
+#                       'sure it is installed on your system.')
+#
+#  use_small_bfd = FLAGS.db_preset == 'reduced_dbs'
+#  _check_flag('small_bfd_database_path', 'db_preset',
+#              should_be_set=use_small_bfd)
+#  _check_flag('bfd_database_path', 'db_preset',
+#              should_be_set=not use_small_bfd)
+#  _check_flag('uniref30_database_path', 'db_preset',
+#              should_be_set=not use_small_bfd)
+#
+#  run_multimer_system = 'multimer' in FLAGS.model_preset
+#  model_type = 'Multimer' if run_multimer_system else 'Monomer'
+#  _check_flag('pdb70_database_path', 'model_preset',
+#              should_be_set=not run_multimer_system)
+#  _check_flag('pdb_seqres_database_path', 'model_preset',
+#              should_be_set=run_multimer_system)
+#  _check_flag('uniprot_database_path', 'model_preset',
+#              should_be_set=run_multimer_system)
+#
+#  if FLAGS.model_preset == 'monomer_casp14':
+#    num_ensemble = 8
+#  else:
+#    num_ensemble = 1
 
   # Check for duplicate FASTA file names.
   fasta_names = [pathlib.Path(p).stem for p in FLAGS.fasta_paths]
@@ -556,6 +559,7 @@ def main(argv):
         random_seed=random_seed,
         models_to_relax=FLAGS.models_to_relax,
         model_type=model_type,
+        features_pkl_path=FLAGS.features_pkl_path
     )
 
 

@@ -93,6 +93,7 @@ flags.DEFINE_string(
     'will be owned by this user:group. By default, this is the current user. '
     'Valid options are: uid or uid:gid, non-numeric values are not recognised '
     'by Docker unless that user has been created within the container.')
+flags.DEFINE_string('features_pkl_path', None, 'path to features dict' )
 
 FLAGS = flags.FLAGS
 
@@ -226,6 +227,7 @@ def main(argv):
       f'--num_multimer_predictions_per_model={FLAGS.num_multimer_predictions_per_model}',
       f'--models_to_relax={FLAGS.models_to_relax}',
       f'--use_gpu_relax={use_gpu_relax}',
+      f'--features_pkl_path={FLAGS.features_pkl_path}',
       '--logtostderr',
   ])
 

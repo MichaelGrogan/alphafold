@@ -94,6 +94,7 @@ flags.DEFINE_string(
     'Valid options are: uid or uid:gid, non-numeric values are not recognised '
     'by Docker unless that user has been created within the container.')
 flags.DEFINE_string('features_pkl_path', None, 'path to features dict' )
+flags.DEFINE_string('af_log_path', None, 'log path')
 
 FLAGS = flags.FLAGS
 
@@ -181,6 +182,11 @@ def main(argv):
   mounts.append(pkl_mount)
   command_args.append(f'--features_pkl_path={pkl_target_path}')
 
+  #mount log path
+  log_mount, log_target_path = _create_mount('af_logs', FLAGS.af_log_path)
+  mounts.append(log_mount)
+  command_args.append(f'--log_dir={log_target_path}')
+
   # Mount each fasta path as a unique target directory.
   target_fasta_paths = []
   for i, fasta_path in enumerate(FLAGS.fasta_paths):
@@ -232,7 +238,6 @@ def main(argv):
       f'--num_multimer_predictions_per_model={FLAGS.num_multimer_predictions_per_model}',
       f'--models_to_relax={FLAGS.models_to_relax}',
       f'--use_gpu_relax={use_gpu_relax}',
-      '--logtostderr',
   ])
 
   client = docker.from_env()
@@ -270,5 +275,6 @@ if __name__ == '__main__':
       'fasta_paths',
       'max_template_date',
       'features_pkl_path',
+      'af_log_path',
   ])
   app.run(main)

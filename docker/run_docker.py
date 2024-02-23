@@ -269,5 +269,6 @@ if __name__ == '__main__':
       'data_dir',
       'fasta_paths',
       'max_template_date',
+      'features_pkl_path',
   ])
   app.run(main)

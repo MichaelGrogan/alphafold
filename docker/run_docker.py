@@ -176,6 +176,11 @@ def main(argv):
   mounts = []
   command_args = []
 
+  #mount features pkl
+  pkl_mount, pkl_target_path = _create_mount(f'features_pkl', FLAGS.features_pkl_path) 
+  mounts.append(mount)
+  command_args.append(f'--features_pkl_path={pkl_target_path}')
+
   # Mount each fasta path as a unique target directory.
   target_fasta_paths = []
   for i, fasta_path in enumerate(FLAGS.fasta_paths):

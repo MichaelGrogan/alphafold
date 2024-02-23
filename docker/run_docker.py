@@ -232,7 +232,6 @@ def main(argv):
       f'--num_multimer_predictions_per_model={FLAGS.num_multimer_predictions_per_model}',
       f'--models_to_relax={FLAGS.models_to_relax}',
       f'--use_gpu_relax={use_gpu_relax}',
-      f'--features_pkl_path={FLAGS.features_pkl_path}',
       '--logtostderr',
   ])
 

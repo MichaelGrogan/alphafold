@@ -434,11 +434,11 @@ def main(argv):
 #  if len(argv) > 1:
 #    raise app.UsageError('Too many command-line arguments.')
 #
-#  for tool_name in (
-#      'jackhmmer', 'hhblits', 'hhsearch', 'hmmsearch', 'hmmbuild', 'kalign'):
-#    if not FLAGS[f'{tool_name}_binary_path'].value:
-#      raise ValueError(f'Could not find path to the "{tool_name}" binary. Make '
-#                       'sure it is installed on your system.')
+  for tool_name in (
+      'jackhmmer', 'hhblits', 'hhsearch', 'hmmsearch', 'hmmbuild', 'kalign'):
+    if not FLAGS[f'{tool_name}_binary_path'].value:
+      raise ValueError(f'Could not find path to the "{tool_name}" binary. Make '
+                       'sure it is installed on your system.')
 #
 #  use_small_bfd = FLAGS.db_preset == 'reduced_dbs'
 #  _check_flag('small_bfd_database_path', 'db_preset',
@@ -448,8 +448,8 @@ def main(argv):
 #  _check_flag('uniref30_database_path', 'db_preset',
 #              should_be_set=not use_small_bfd)
 #
-#  run_multimer_system = 'multimer' in FLAGS.model_preset
-#  model_type = 'Multimer' if run_multimer_system else 'Monomer'
+  run_multimer_system = 'multimer' in FLAGS.model_preset
+  model_type = 'Multimer' if run_multimer_system else 'Monomer'
 #  _check_flag('pdb70_database_path', 'model_preset',
 #              should_be_set=not run_multimer_system)
 #  _check_flag('pdb_seqres_database_path', 'model_preset',
@@ -457,10 +457,10 @@ def main(argv):
 #  _check_flag('uniprot_database_path', 'model_preset',
 #              should_be_set=run_multimer_system)
 #
-#  if FLAGS.model_preset == 'monomer_casp14':
-#    num_ensemble = 8
-#  else:
-#    num_ensemble = 1
+  if FLAGS.model_preset == 'monomer_casp14':
+    num_ensemble = 8
+  else:
+    num_ensemble = 1
 
   # Check for duplicate FASTA file names.
   fasta_names = [pathlib.Path(p).stem for p in FLAGS.fasta_paths]
